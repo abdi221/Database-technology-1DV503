@@ -54,18 +54,21 @@ def menu():
                 break
     
         elif ch == 2:
-            print("Weclome to the Online Book Store\n\tNew Member Registration\n\n")
+            pretty_print("      Weclome to the Online Book Store\n         New Member Registration")
             fname = input("First name: ")
             lname = input("Lastname: ")
             adress = input("Adress: ")
             city = input("City: ")
             zip = input("Zip: ")
             pnumber = input("Phone Number: ")
-            eadress = input("Email Adress: " + "\n")
+            eadress = input("Email Adress: ")
    
-            if '@' not in eadress:
-                print("Invalid email adress. Please use @ in the email when registering it")
-                continue
+            while True:
+                if '@' not in eadress:
+                    print("Invalid email adress. Please use @ in the email when registering it")
+                else:
+                    break
+                    
             pw = getpass("Password: ")
         db = Database()
         db.mycursor.execute("INSERT INTO members(fname, lname, adress, city, zip, pnumber, eadress, pw) \
@@ -82,12 +85,19 @@ def main_menu():
     pretty_print("Weclome to the Online Book Store\n\tNew Member Registration\n\n")
     print(("\t" * 4) + "1. Browse by Subject") 
     print(("\t" * 4) + "2. Search By Author/Title")
-    print(("\t" * 4) + "Check Out")
-    print(("\t") * 4 + "Logout" + '\n' *2)
-    ch = input("Type in your option: ")
+    print(("\t" * 4) + "3. Check Out")
+    print(("\t") * 4 + "4. Logout" + '\n' *2)
+    ch = int(input("Type in your option: "))
     db = Database()
     if ch == 1:
-        db.mycursor.execute("SELECT * FROM books.subjects ORDER BY ASC")
+        db.mycursor.execute("SELECT * FROM books")
+        books = db.mycursor.fetchall()
+
+        subjects = set(books[4] for book in books)
+        print("Subjects: " + "\n")
+
+
+
     
         
 
@@ -97,15 +107,16 @@ def main_menu():
 def main():
     while True:
         try:
-            username = input("Enter SQL Server username: ")
-            password = getpass("Enter SQL Server Password: ")
+            # username = input("Enter SQL Server username: ")
+            # password = getpass("Enter SQL Server Password: ")
             db = Database()
             print("Database object created successfully.")
             break  # Break the loop if connection is successful
         except Exception as e:
             print("Connection failed, check credentials and try again.", e)
     try:
-      main_menu(db)
+        menu()
+    #   main_menu()
     finally:
         db.close_connection()
 
