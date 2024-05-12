@@ -16,14 +16,15 @@ cursor = mysql.connector
 # pretty_print("Welcome to Online bookstore!")
 
 # make a choice
-def menu():
-    def pretty_print(content: str, line_len: int = 45) -> None:
+
+def pretty_print(content: str, line_len: int = 45) -> None:
         print(f"{'*' * line_len}")
         print(f"{'***' + ' ' * (line_len - 6) + '***'}")
         print(f"{'***' + ' ' * ((line_len - len(content) - 6) // 2) + content + ' ' * ((line_len - len(content) - 6) // 2) + ' ***'}")
         print(f"{'***' + ' ' * (line_len - 6) + '***'}")
         print(f"{'*' * line_len}")
 
+def menu():
     pretty_print("Welcome to Online bookstore!")
 
     db = Database()
@@ -77,15 +78,21 @@ def menu():
         if "ENTER":
             menu()
 
-def main_menu(db):
-    def member_login(username, password):
-        print("Memeber")
-        username = input("Enter your username: ")
-        password = getpass("Enter your password: ")
-        if db.validate_user(username, password):
-            print("Welcome back!", username)
-        else:
-            print("Could not log you in, check the username and password.")
+def main_menu():
+    pretty_print("Weclome to the Online Book Store\n\tNew Member Registration\n\n")
+    print(("\t" * 4) + "1. Browse by Subject") 
+    print(("\t" * 4) + "2. Search By Author/Title")
+    print(("\t" * 4) + "Check Out")
+    print(("\t") * 4 + "Logout" + '\n' *2)
+    ch = input("Type in your option: ")
+    db = Database()
+    if ch == 1:
+        db.mycursor.execute("SELECT * FROM books.subjects ORDER BY ASC")
+    
+        
+
+
+ 
 
 def main():
     while True:
