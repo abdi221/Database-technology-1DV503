@@ -65,9 +65,9 @@ def menu():
    
             while True:
                 if '@' in eadress:
-                    print("Invalid email adress. Please use @ in the email when registering it")
-                else:
                     break
+                else:
+                    print("Invalid email adress. Please use @ in the email when registering it")
                     
             pw = getpass("Password: ")
         db = Database()
