@@ -1,7 +1,7 @@
 USE book_store;
 
 CREATE TABLE  orders (
-    ono INT PRIMARY KEY,
+    ono INT AUTO_INCREMENT PRIMARY KEY,
     userid INT NOT NULL,
     created DATE NULL,
     shipAddress VARCHAR(50) NULL,
