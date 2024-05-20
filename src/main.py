@@ -100,8 +100,7 @@ def main_menu():
     print("\t" * 4 + "1. Browse by Subject")
     print("\t" * 4 + "2. Search By Author/Title")
     print("\t" * 4 + "3. Check Out")
-    print("\t" * 4 + "4. Logout")
-    print("\t" * 4 + "5. Quit\n")
+    print("\t" * 4 + "4. Logout\n")
     ch = int(input("Type in your option: "))
 
     if ch == 1:
@@ -114,9 +113,6 @@ def main_menu():
         global logged_user_id
         logged_user_id = None
         menu()
-    elif ch == 5:
-        db.close_connection()
-        exit()
 
 
 def browse_by_subject():
