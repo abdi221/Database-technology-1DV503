@@ -7,7 +7,7 @@ CREATE TABLE members (
     city VARCHAR(30) NOT NULL,
     zip INT NOT NULL,
     phone VARCHAR(15) NULL,
-    email VARCHAR(40) NOT NULL,
+    email VARCHAR(40) UNIQUE NOT NULL,
     userid INT AUTO_INCREMENT PRIMARY KEY,
     password VARCHAR(200) NOT NULL
 );
