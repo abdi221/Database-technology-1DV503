@@ -27,7 +27,7 @@ def pretty_print(content: str, content2: str = None, line_len: int = 45) -> None
 
 
 def menu():
-    """Displays the main menu and handles user choices."""
+    # """Displays the main menu and handles user choices."""
 
     while True:
         pretty_print("Welcome to Online Bookstore!")
@@ -47,7 +47,7 @@ def menu():
 
 
 def login():
-    """Handles member login."""
+    # """Handles member login."""
     global logged_user_id
     email = input("Email: ")
     password = getpass("Password: ")
@@ -98,7 +98,7 @@ def register():
             menu()
  
 def main_menu():
-    """Displays the main menu for logged in members and handles user choices."""
+    # """Displays the main menu for logged in members and handles user choices."""
     while True:
         pretty_print("Welcome to the Online Book Store","Member Menu")
         print("\t     " + "1. Browse by Subject")
@@ -131,7 +131,7 @@ def main_menu():
 
 
 def browse_by_subject():
-    """Allows browsing books by subject."""
+    # """Allows browsing books by subject."""
     page = 1
     db.mycursor.execute("SELECT DISTINCT subject FROM books")
     subjects = db.mycursor.fetchall()
@@ -163,7 +163,7 @@ def browse_by_subject():
 
 
 def display_books_by_subject(subject, page):
-    """Displays books by subject with pagination."""
+    # """Displays books by subject with pagination."""
     offset = (page - 1) * 2
     db.mycursor.execute("SELECT * FROM books WHERE subject = %s LIMIT 2 OFFSET %s", (subject, offset))
     books = db.mycursor.fetchall()
@@ -180,7 +180,7 @@ def display_books_by_subject(subject, page):
 
 
 def add_book_to_cart(isbn):
-    """Adds a book to the user's cart."""
+    # """Adds a book to the user's cart."""
     db.mycursor.execute("SELECT * FROM books WHERE isbn = %s", (isbn,))
     book = db.mycursor.fetchone()
 
@@ -207,7 +207,7 @@ def add_book_to_cart(isbn):
 
 
 def get_userid():
-    """Returns the logged in user's ID."""
+    # """Returns the logged in user's ID."""
     global logged_user_id
     if logged_user_id:
         return logged_user_id
@@ -217,7 +217,7 @@ def get_userid():
 
 
 def search_by_author_title():
-    """Allows searching books by author or title."""
+    # """Allows searching books by author or title."""
     while True:
         print("Search by Author/Title")
         print("\t1. Author Search")
@@ -295,14 +295,14 @@ def title_search():
 
 
 def display_books(books):
-    """Displays a list of books."""
+    # """Displays a list of books."""
     print("\nBooks:")
     for book in books:
         print(f"Title: {book[2]}\nAuthor: {book[1]}\nISBN: {book[0]}\nPrice: {book[3]}\nSubject: {book[4]}\n")
 
 
 def handle_option(chosen_option):
-    """Handles options after displaying books."""
+    # """Handles options after displaying books."""
     if len(chosen_option) == 10:
         add_book_to_cart(chosen_option)
     elif chosen_option == "":
@@ -314,7 +314,7 @@ def handle_option(chosen_option):
 
 
 def continue_browsing():
-    """Placeholder function for continued browsing."""
+    # """Placeholder function for continued browsing."""
     print("Continuing browsing...\n")
     print("All results are displayed returning to main menu...\n")
     time.sleep(2)
@@ -322,13 +322,13 @@ def continue_browsing():
 
 
 def checkout():
-    """Handles the checkout process."""
+    # """Handles the checkout process."""
     pretty_print("Check Out")
     display_invoice()
 
 
 def display_invoice():
-    """Displays the invoice for the current cart."""
+    # """Displays the invoice for the current cart."""
     user_id = get_userid()
 
     print("Current Cart Contents:\n")
@@ -368,7 +368,7 @@ def display_invoice():
 
 
 def save_order(user_id, cart_items):
-    """Saves the order and displays the invoice."""
+    # """Saves the order and displays the invoice."""
     user = get_user_data(user_id)
     current_date = datetime.now().strftime("%Y-%m-%d")
     shipment_date = (datetime.now() + timedelta(weeks=1)).strftime("%Y-%m-%d")
@@ -410,14 +410,14 @@ def save_order(user_id, cart_items):
 
 
 def get_shipping_data(user_id):
-    """Retrieves shipping data for the user."""
+    # """Retrieves shipping data for the user."""
     db.mycursor.execute("SELECT address, city, zip FROM members WHERE userid = %s", (user_id,))
     address, city, zip = db.mycursor.fetchone()
     return address, city, zip
 
 
 def get_book_price_by_isbn(isbn):
-    """Retrieves the price of a book given its ISBN."""
+    # """Retrieves the price of a book given its ISBN."""
     db.mycursor.execute("SELECT price FROM books WHERE isbn = %s", (isbn,))
     price = db.mycursor.fetchone()
     if price:
@@ -428,7 +428,7 @@ def get_book_price_by_isbn(isbn):
 
 
 def get_book_title_by_isbn(isbn):
-    """Retrieves the title of a book given its ISBN."""
+    # """Retrieves the title of a book given its ISBN."""
     db.mycursor.execute("SELECT title FROM books WHERE isbn = %s", (isbn,))
     title = db.mycursor.fetchone()
     if title:
@@ -439,20 +439,20 @@ def get_book_title_by_isbn(isbn):
 
 
 def clear_cart(user_id):
-    """Clears the cart for the user."""
+    # """Clears the cart for the user."""
     db.mycursor.execute("DELETE FROM cart WHERE userid = %s", (user_id,))
     db.conn.commit()
     print("Cart has been cleared.\n")
 
 
 def get_user_data(user_id):
-    """Retrieves user data."""
+    # """Retrieves user data."""
     db.mycursor.execute("SELECT * FROM members WHERE userid = %s", (user_id,))
     return db.mycursor.fetchone()
 
 
 def print_table(rows, total):
-    """Prints a formatted table of the order details."""
+    # """Prints a formatted table of the order details."""
     headers = ["ISBN", "Title", "$", "Qty", "Total"]
     footers = ["Total", "", "", "", total]
     col_widths = [max(len(str(item)) for item in col) for col in zip(*rows, headers)]
@@ -471,7 +471,7 @@ def print_table(rows, total):
 
 
 def main():
-    """Main function to initiate the program."""
+    # """Main function to initiate the program."""
     while True:
         try:
             db = Database()
