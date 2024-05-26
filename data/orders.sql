@@ -1,6 +1,4 @@
-USE book_store;
-
-CREATE TABLE  orders (
+CREATE TABLE orders (
     ono INT AUTO_INCREMENT PRIMARY KEY,
     userid INT NOT NULL,
     created DATE NULL,
