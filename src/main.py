@@ -1,6 +1,8 @@
+from getpass import getpass
 import time
 from datetime import datetime, timedelta
-import mysql.connector
+# from mysql.connector import cursor
+# import mysql.connector
 from database import Database
 
 # Global variable for logged in user ID
@@ -29,9 +31,9 @@ def menu():
     while True:
         pretty_print("Welcome to Online Bookstore!")
 
-        print("\t" * 4 + "1. Member Login")
-        print("\t" * 4 + "2. Member Registration")
-        print("\t" * 4 + "q. Quit\n")
+        print("\t" * 2 + "1. Member Login")
+        print("\t" * 2 + "2. Member Registration")
+        print("\t" * 2 + "q. Quit\n")
         ch = input("Type in your option: ")
 
         if ch == "1":
@@ -47,7 +49,7 @@ def login():
     """Handles member login."""
     global logged_user_id
     email = input("Email: ")
-    password = input("Password: ")
+    password = getpass("Password: ")
 
     db.mycursor.execute("SELECT * FROM members WHERE email = %s AND password = %s", (email, password))
     user = db.mycursor.fetchone()
@@ -58,14 +60,14 @@ def login():
         time.sleep(2)
         main_menu()
     else:
-        print("Invalid email or password. Please try again.")
+        print("Invalid email or password. Going back to Main Menu.")
         time.sleep(2)
 
 
 def register():
-    """Handles member registration."""
-    print("Welcome to the Online Book Store")
-    print("New Member Registration\n")
+    # Handles member registration
+    pretty_print("Welcome to the Online Book Store\n" \
+                      '\t'+"New Member Registration")
     fname = input("First name: ")
     lname = input("Lastname: ")
     address = input("Address: ")
@@ -90,29 +92,41 @@ def register():
                             (fname, lname, address, city, zip, pnumber, email, pw))
         db.conn.commit()
         print("You have registered successfully!")
-        input("Press ENTER to go back to Menu.")
-        menu()
-
-
+        enter = input("Press ENTER to go back to Menu.")
+        if enter == '':
+            menu()
+ 
 def main_menu():
     """Displays the main menu for logged in members and handles user choices."""
-    pretty_print("Welcome to the Online Book Store", "Member Menu")
-    print("\t" * 4 + "1. Browse by Subject")
-    print("\t" * 4 + "2. Search By Author/Title")
-    print("\t" * 4 + "3. Check Out")
-    print("\t" * 4 + "4. Logout\n")
-    ch = int(input("Type in your option: "))
-
-    if ch == 1:
-        browse_by_subject()
-    elif ch == 2:
-        search_by_author_title()
-    elif ch == 3:
-        checkout()
-    elif ch == 4:
-        global logged_user_id
-        logged_user_id = None
-        menu()
+    while True:
+        pretty_print("Welcome to the Online Book Store","Member Menu")
+        print("\t     " + "1. Browse by Subject")
+        print("\t     " + "2. Search By Author/Title")
+        print("\t     " + "3. Check Out")
+        print("\t     " + "4. Logout")
+        print("\t     " + "5. Quit\n")
+        try:
+            ch = int(input("Type in your option: "))
+        except ValueError:
+            print("Invalid input. Please enter number between 1 and 5.")
+            continue
+        if ch == 1:
+            browse_by_subject()
+        elif ch == 2:
+            search_by_author_title()
+        elif ch == 3:
+            checkout()
+        elif ch == 4:
+            print("Logging Out!")
+            global logged_user_id
+            logged_user_id = None
+            menu()
+        elif ch == 5:
+            db.close_connection()
+            break
+        # else:
+        #     print("Invalid input, go back to menu by pressing enter key")
+        #     if 
 
 
 def browse_by_subject():
@@ -133,7 +147,7 @@ def browse_by_subject():
             display_books_by_subject(chosen_subject, page)
 
             chosen_option = input(
-                "Enter ISBN to add to Cart, 'n' to see next page, or ENTER to go back to menu: \n")
+                "Enter ISBN to add to Cart, 'n' to see next page, or press the enter key to go back to menu: \n")
             if len(chosen_option) == 10:
                 add_book_to_cart(chosen_option)
             elif chosen_option == 'n':
@@ -172,7 +186,18 @@ def add_book_to_cart(isbn):
     if book:
         quantity = int(input("Enter quantity: "))
         userid = get_userid()
-        db.mycursor.execute("INSERT INTO cart (userid, isbn, qty) VALUES (%s, %s, %s)", (userid, isbn, quantity))
+        check_query = "SELECT qty FROM cart WHERE userid = %s AND isbn = %s"
+        db.mycursor.execute(check_query, (userid, isbn))
+        result = db.mycursor.fetchone()
+        if result:
+            # If the entry exists, update the quantity
+            update_query = "UPDATE cart SET qty = qty + %s WHERE userid = %s AND isbn = %s"
+            db.mycursor.execute(update_query, (quantity, userid, isbn))
+        else:
+            # If the entry does not exist, insert the new entry
+            insert_query = "INSERT INTO cart (userid, isbn, qty) VALUES (%s, %s, %s)"
+            db.mycursor.execute(insert_query, (userid, isbn, quantity))
+        # db.mycursor.execute("INSERT INTO cart (userid, isbn, qty) VALUES (%s, %s, %s)", (userid, isbn, quantity))
         db.conn.commit()
         print("Book added to cart")
         time.sleep(2)
@@ -193,12 +218,23 @@ def get_userid():
 def search_by_author_title():
     """Allows searching books by author or title."""
     while True:
-        pretty_print("Search by Author/Title")
+        print("Search by Author/Title")
         print("\t1. Author Search")
         print("\t2. Title Search")
         print("\t3. Go Back to Main Menu\n")
 
-        option = int(input("Enter your option: "))
+        option = input("Enter your option: ")
+
+        if option == '':
+            print("Returning to the main menu...")
+            main_menu()
+            break
+
+        try:
+            option = int(option)
+        except ValueError:
+            print("Invalid option. Please choose again.")
+            continue
 
         if option == 1:
             author_search()
@@ -212,7 +248,7 @@ def search_by_author_title():
 
 
 def author_search():
-    """Handles book search by author."""
+    # Handles book search by author
     while True:
         search_term = input(
             "Enter a substring of the author's name (or press Enter to go back to the previous menu): ")
@@ -235,7 +271,7 @@ def author_search():
 
 
 def title_search():
-    """Handles book search by title."""
+    # Handles book search by title
     while True:
         search_term = input(
             "Enter title or part of the title (or press Enter to go back to the previous menu): ")

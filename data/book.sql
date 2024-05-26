@@ -1,5 +1,3 @@
-USE book_store;
-
 CREATE TABLE books (
     isbn CHAR(10) PRIMARY KEY,
     author VARCHAR(100) NOT NULL,
